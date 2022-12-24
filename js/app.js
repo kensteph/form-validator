@@ -1,10 +1,10 @@
 //  Target all the elements
 const form = document.querySelector('form');
 const username = document.querySelector('#username');
-const email = document.querySelector('email');
-const password = document.querySelector('password');
-const cPassword = document.querySelector('cPassword');
-
+const email = document.querySelector('#email');
+const password = document.querySelector('#password');
+const cPassword = document.querySelector('#passwordC');
+const btnSubmit = form.querySelector('button');
 // Utilities
 const isRequired = (field) => (field.value.trim().length === 0 ? false : true);
 const isBetween = (field, min, max) =>
@@ -44,9 +44,9 @@ const isCorrectPassword = (field) => {
 };
 
 //Check for each field
+
 const checkUsername = () => {
   let textError = username.parentElement.querySelector('small');
-  textError.style.color = 'red';
   if (isRequired(username) && isBetween(username, 4, 30)) {
     username.classList.remove('invalid');
     username.classList.add('valid');
@@ -59,13 +59,76 @@ const checkUsername = () => {
   }
   return false;
 };
+
+const checkEmail = () => {
+  let textError = email.parentElement.querySelector('small');
+  if (isValidEmail(email)) {
+    email.classList.remove('invalid');
+    email.classList.add('valid');
+    textError.textContent = '';
+    return true;
+  } else {
+    email.classList.remove('valid');
+    email.classList.add('invalid');
+    textError.textContent =
+      'Please, enter a valid email.(eg: stephanie88@gmail.com)';
+  }
+  return false;
+};
+
+const checkPassword = () => {
+  let textError = password.parentElement.querySelector('small');
+  if (isCorrectPassword(password)) {
+    textError.textContent = '';
+    password.classList.remove('invalid');
+    password.classList.add('valid');
+    textError.textContent = '';
+    return true;
+  } else {
+    password.classList.remove('valid');
+    password.classList.add('invalid');
+    textError.textContent =
+      'Your password should contain at least 8 characters,1 upper case,1 special character and must less or equal to 32 characters';
+  }
+  return false;
+};
+
+const checkCpassword = () => {
+  let textError = cPassword.parentElement.querySelector('small');
+  if (isCorrectPassword(cPassword) && cPassword.value === password.value) {
+    textError.textContent = '';
+    cPassword.classList.remove('invalid');
+    cPassword.classList.add('valid');
+    textError.textContent = '';
+    return true;
+  } else {
+    cPassword.classList.remove('valid');
+    cPassword.classList.add('invalid');
+    if (cPassword.value != password.value) {
+      textError.textContent =
+        'Confirmation password does not match the password';
+    } else {
+      textError.textContent =
+        'Your password should contain at least 8 characters,1 upper case,1 special character and must less or equal to 32 characters';
+    }
+  }
+  return false;
+};
+
 // Add event on the form
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   let ckUsername = checkUsername();
-  console.log(username.value, ckUsername);
-});
-
-username.addEventListener('input', () => {
-  console.log(username.value);
+  let ckEmail = checkEmail();
+  let ckPassword = checkPassword();
+  let ckCpassword = checkCpassword();
+  if (ckUsername && ckEmail && ckPassword && ckCpassword) {
+    // Submit the form
+    // Reset the form
+    form.reset();
+    btnSubmit.innerHTML = 'Thanks for registering!';
+    setTimeout(() => {
+      btnSubmit.innerHTML = 'Submit';
+    }, 3000);
+  }
 });
